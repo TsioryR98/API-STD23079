@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: STD23079 - TD4
+  version: "1.0.0"
+servers:
+  - url: https://localhost.STD23079.com
+paths:
+  /customers/{customerId}/orders:
+    get:
+      tags:
+        - Get all orders for a specific customer
+      operationId: getAllOrdersByCustomer
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: reference
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of orders for a specific customer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      tags:
+        - Post a new order for a specific customer
+      operationId: postOrderForCustomer
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "201":
+          description: Order created successfully for the customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad request - Invalid input
+    put:
+      tags:
+        - Update an order for a specific customer
+      operationId: updateOrderForCustomer
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "202":
+          description: Order updated successfully for the customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad request - Invalid input
+        "404":
+          description: Order not found
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          description: "Identifiant unique de la commande, généré automatiquement"
+        reference:
+          type: string
+          description: "Numéro de commande unique"
+        customerId:
+          type: string
+          description: "Identifiant unique du client"
+        meals:
+          type: array
+          items:
+            type: object
+            properties:
+              mealId:
+                type: string
+                description: "Identifiant unique du plat"
+              quantity:
+                type: integer
+                description: "Quantité commandée"
+        orderDatetime:
+          type: string
+          format: date-time
+          description: "Date et heure de la commande, générée automatiquement"
+      required:
+        - reference
+        - customerId
+        - meals
